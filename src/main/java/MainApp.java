@@ -96,7 +96,6 @@ public class MainApp extends Application {
         loadProducts();
         stage.show();
     }
-
     private void addProduct(TextField name, TextField qty, TextField price) {
         try {
             String n = name.getText().trim();
@@ -108,7 +107,7 @@ public class MainApp extends Application {
             Product product = new Product(n, q, p);
             dao.addProduct(product);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Product added!");
-            loadProducts();
+            loadProducts();           // already calls refresh now
             name.clear(); qty.clear(); price.clear();
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Input Error", ex.getMessage());
@@ -121,16 +120,23 @@ public class MainApp extends Application {
             int qty = Integer.parseInt(qtyField.getText());
             dao.updateQuantity(id, qty);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Stock updated!");
-            loadProducts();
+            loadProducts();           // already calls refresh now
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Error", "Invalid ID or quantity");
         }
     }
 
+
+
+
     private void loadProducts() {
         try {
             productList.clear();
             productList.addAll(dao.getAllItems(Product.class));
+
+            // ← THIS FIXES the "last item not turning red" bug
+            table.refresh();
+
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Database Error", e.getMessage());
         }
