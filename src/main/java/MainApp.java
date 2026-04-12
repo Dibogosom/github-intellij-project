@@ -74,7 +74,7 @@ public class MainApp extends Application {
         TableColumn<Product, Integer> qtyCol = new TableColumn<>("Quantity");
         qtyCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
-        TableColumn<Product, Double> priceCol = new TableColumn<>("Price");
+        TableColumn<Product, Double> priceCol = new TableColumn<>("Price(Ksh)");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         table.getColumns().addAll(idCol, nameCol, qtyCol, priceCol);
