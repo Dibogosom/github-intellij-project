@@ -74,7 +74,7 @@ public class MainApp extends Application {
         TableColumn<Product, Integer> qtyCol = new TableColumn<>("Quantity");
         qtyCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
-        TableColumn<Product, Double> priceCol = new TableColumn<>("Price(Ksh)");
+        TableColumn<Product, Double> priceCol = new TableColumn<>("Price(Ksh) ");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         table.getColumns().addAll(idCol, nameCol, qtyCol, priceCol);
@@ -100,15 +100,22 @@ public class MainApp extends Application {
         try {
             String n = name.getText().trim();
             if (n.isEmpty()) throw new Exception("Product name is required");
-            int q = Integer.parseInt(qty.getText());
-            double p = Double.parseDouble(price.getText());
-            if (q < 0 || p < 0) throw new Exception("Quantity and Price must be >= 0");
+
+            int q = Integer.parseInt(qty.getText().trim());
+            double p = Double.parseDouble(price.getText().trim());
+
+            if (q < 0 || p < 0) {
+                throw new Exception("Quantity and Price must be >= 0");
+            }
 
             Product product = new Product(n, q, p);
             dao.addProduct(product);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Product added!");
-            loadProducts();           // already calls refresh now
-            name.clear(); qty.clear(); price.clear();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Product added successfully!");
+            loadProducts();
+
+            name.clear();
+            qty.clear();
+            price.clear();
         } catch (Exception ex) {
             showAlert(Alert.AlertType.ERROR, "Input Error", ex.getMessage());
         }
@@ -116,13 +123,23 @@ public class MainApp extends Application {
 
     private void updateStock(TextField idField, TextField qtyField) {
         try {
-            int id = Integer.parseInt(idField.getText());
-            int qty = Integer.parseInt(qtyField.getText());
+            int id = Integer.parseInt(idField.getText().trim());
+            int qty = Integer.parseInt(qtyField.getText().trim());
+
+            // ← NEW VALIDATION: Prevent negative quantity
+            if (qty < 0) {
+                throw new Exception("Quantity cannot be negative!");
+            }
+
             dao.updateQuantity(id, qty);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Stock updated!");
-            loadProducts();           // already calls refresh now
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Stock updated successfully!");
+            loadProducts();
+
+            // Clear fields after success
+            idField.clear();
+            qtyField.clear();
         } catch (Exception ex) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Invalid ID or quantity");
+            showAlert(Alert.AlertType.ERROR, "Input Error", ex.getMessage());
         }
     }
 
